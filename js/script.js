@@ -43,6 +43,8 @@ window.onload = (e) => {
       appId: "1:118571443893:web:b900e54c6d83b4947900fc",
       measurementId: "${config.measurementId}"
    };
+   const cardContainer = document.getElementById("card_container")
+
 
    // Initialize Firebase
    const app = initializeApp(firebaseConfig);
@@ -145,7 +147,7 @@ window.onload = (e) => {
          });
          const taskObj = await getDoc(doc(db, "tasks", taskRef.id))
          const newCard = createCardElement(taskObj.data(), taskRef.id, document.querySelectorAll('.card').length)
-         document.querySelector('.row#card_container').insertAdjacentElement('afterbegin', newCard);
+         cardContainer.insertAdjacentElement('afterbegin', newCard);
       } catch (e) {
          console.error("Error adding TAsk: ", e);
       }
@@ -306,9 +308,8 @@ window.onload = (e) => {
    /*Display all Cards */
    /********************************/
    function displayAllElements(taskList) {
-      let card_container = document.getElementById("card_container")
       taskList.forEach((task, i) => {
-         card_container.appendChild(createCardElement(task.data, task.id, i));
+         cardContainer.appendChild(createCardElement(task.data, task.id, i));
       })
    }
 
@@ -330,20 +331,20 @@ window.onload = (e) => {
 
    const submitForm = (e, refId) => {
       const task = {}
-      if (taskTitleInput.value == "" || taskDescriptionInput.value == "" || taskDeadlineInput.value == "") {
-         taskTitleInput.style.borderColor = taskTitleInput.value != "" ? "initial" : "red";
-         taskDescriptionInput.style.borderColor = taskDescriptionInput.value != "" ? "initial" : "red";
+      if (taskTitleInput.value.trim() == "" || taskDescriptionInput.value.trim() == "" || taskDeadlineInput.value == "") {
+         taskTitleInput.style.borderColor = taskTitleInput.value.trim() != "" ? "initial" : "red";
+         taskDescriptionInput.style.borderColor = taskDescriptionInput.value.trim() != "" ? "initial" : "red";
          taskDeadlineInput.style.borderColor = taskDeadlineInput.value != "" ? "initial" : "red";
          let error = document.querySelector('#error')
          error.classList.toggle('d-none')
          e.preventDefault()
       } else {
          taskPriorityInput = document.querySelector('[name="task_priority"]:checked')
-         task.titre = taskTitleInput.value
-         task.description = taskDescriptionInput.value
+         task.titre = taskTitleInput.value.trim()
+         task.description = taskDescriptionInput.value.trim()
          task.priorite = taskPriorityInput.value
-         task.dateLimite = new Date(taskDeadlineInput.value).toUTCString()
-         task.dateCreation = new Date().toUTCString()
+         task.dateLimite = new Date(taskDeadlineInput.value).toGMTString()
+         task.dateCreation = new Date().toGMTString()
          if (refId && refId != undefined) {
             updateTask(refId, task);
          } else {
@@ -461,6 +462,14 @@ window.onload = (e) => {
             })
             break;
          case "Date":
+            todoCards.forEach(element => {
+               const date = element.querySelector('strong.deadline')
+               if (element.dataset.etat == "En cours") {
+                  element.classList.remove("d-none")
+               } else {
+                  element.classList.add("d-none")
+               }
+            })
 
             break;
          case "Priorite":
@@ -485,22 +494,19 @@ window.onload = (e) => {
 
             break;
          case "Titre":
-            let todoCardsArray = [...todoCards]
+            let todoCardsArray = [...todoCards];
             let div2 = document.createElement('div')
-            todoCardsArray.sort((a, b)=> {
-               console.log(todoCards[0]);
-               console.log(a);
-               console.log(b);
-               console.log(todoCards[0].parentElement);
-               if(a.dataset.titre.toLowerCase() >= b.dataset.titre.toLowerCase()){
-                  todoCards[0].parentElement.insertBefore(a, b)
+            todoCardsArray.sort((a, b) => {
+               if (a.dataset.titre.toLowerCase() >= b.dataset.titre.toLowerCase()) {
                   return 1
                } else {
-                  todoCards[0].parentElement.insertBefore(b, a)
                   return -1
                }
             })
-            console.log(todoCardsArray);
+            cardContainer.replaceChildren(...todoCardsArray)
+            todoCardsArray.forEach(element => {
+               element.classList.remove("d-none")
+            })
 
             // console.log(i);
             // element.classList.remove('d-none')
