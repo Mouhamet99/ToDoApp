@@ -477,6 +477,7 @@ window.onload = (e) => {
 
 
             break;
+         case "all":
          case "DateCreation":
             // let elts = document.querySelectorAll('[data-date-creation]')
 
@@ -492,26 +493,32 @@ window.onload = (e) => {
 
 
             break;
-         case "Priorite":
-            // let div = document.createElement('div')
-            // let todoCardsArray = [...todoCards]
-            // todoCards.forEach(card=>{
-            //    if(card.dataset.propriete == "faible"){
-            //       div.appendChild(card)
-            //    }
-            // })
-            // todoCards.forEach(card=>{
-            //    if(card.dataset.propriete == "moyen"){
-            //       div.appendChild(card)
-            //    }
-            // })
-            // todoCards.forEach(card=>{
-            //    if(card.dataset.propriete == "elevee"){
-            //       div.appendChild(card)
-            //    }
-            // })
-            // console.log(div);
-
+         case "faible":
+            todoCards.forEach(element => {
+               if (element.dataset.priorite == "faible") {
+                  element.classList.remove("d-none")
+               } else {
+                  element.classList.add("d-none")
+               }
+            })
+            break;
+         case "moyen":
+            todoCards.forEach(element => {
+               if (element.dataset.priorite == "moyen") {
+                  element.classList.remove("d-none")
+               } else {
+                  element.classList.add("d-none")
+               }
+            })
+            break;
+         case "elevee":
+            todoCards.forEach(element => {
+               if (element.dataset.priorite == "elevee") {
+                  element.classList.remove("d-none")
+               } else {
+                  element.classList.add("d-none")
+               }
+            })
             break;
          case "Titre":
             todoCardsArray = [...todoCards];
@@ -524,11 +531,6 @@ window.onload = (e) => {
                element.classList.remove("d-none")
             })
 
-            break;
-         default:
-            todoCards.forEach(element => {
-               element.classList.remove("d-none")
-            })
             break;
 
       }
