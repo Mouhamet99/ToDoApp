@@ -250,6 +250,10 @@ window.onload = (e) => {
       const cardElement = document.createElement("div")
       cardElement.setAttribute("class", "card px-0 shadow-sm");
       cardElement.dataset.id = refIid;
+      cardElement.dataset.etat = task.etat;
+      cardElement.dataset.priorite = task.priorite;
+      cardElement.dataset.titre = task.titre;
+      cardElement.dataset.date = task.dateLimite;
       cardElement.appendChild(cardHeaderElement);
       cardElement.appendChild(cardBodyElement);
       cardElement.appendChild(cardFooterElement);
@@ -427,6 +431,96 @@ window.onload = (e) => {
 
       document.querySelector('#add_modal_trigger').click();
    }
+
+   /********************************/
+   /*Filter Functions */
+   /********************************/
+   const filterBy = (option = "") => {
+      const todoCards = document.querySelectorAll('.card')
+      todoCards.forEach(card => {
+         card.classList.add('d-none')
+      })
+      switch (option) {
+         case "Terminé":
+            todoCards.forEach(element => {
+               if (element.dataset.etat == "Terminé") {
+                  element.classList.remove("d-none")
+               } else {
+                  element.classList.add("d-none")
+               }
+            })
+            break;
+
+         case "En cours":
+            todoCards.forEach(element => {
+               if (element.dataset.etat == "En cours") {
+                  element.classList.remove("d-none")
+               } else {
+                  element.classList.add("d-none")
+               }
+            })
+            break;
+         case "Date":
+
+            break;
+         case "Priorite":
+            // let div = document.createElement('div')
+            // let todoCardsArray = [...todoCards]
+            // todoCards.forEach(card=>{
+            //    if(card.dataset.propriete == "faible"){
+            //       div.appendChild(card)
+            //    }
+            // })
+            // todoCards.forEach(card=>{
+            //    if(card.dataset.propriete == "moyen"){
+            //       div.appendChild(card)
+            //    }
+            // })
+            // todoCards.forEach(card=>{
+            //    if(card.dataset.propriete == "elevee"){
+            //       div.appendChild(card)
+            //    }
+            // })
+            // console.log(div);
+
+            break;
+         case "Titre":
+            let todoCardsArray = [...todoCards]
+            let div2 = document.createElement('div')
+            todoCardsArray.sort((a, b)=> {
+               console.log(todoCards[0]);
+               console.log(a);
+               console.log(b);
+               console.log(todoCards[0].parentElement);
+               if(a.dataset.titre.toLowerCase() >= b.dataset.titre.toLowerCase()){
+                  todoCards[0].parentElement.insertBefore(a, b)
+                  return 1
+               } else {
+                  todoCards[0].parentElement.insertBefore(b, a)
+                  return -1
+               }
+            })
+            console.log(todoCardsArray);
+
+            // console.log(i);
+            // element.classList.remove('d-none')
+
+            break;
+         default:
+            todoCards.forEach(element => {
+               element.classList.remove("d-none")
+            })
+            break;
+
+      }
+   }
+   const filterOptions = document.querySelectorAll('.dropdown-item');
+   filterOptions.forEach(filterOption => {
+      filterOption.addEventListener('click', (event) => {
+         filterBy(filterOption.dataset.option);
+      })
+   })
+
 
 
 
