@@ -55,7 +55,7 @@ window.onload = (e) => {
    /********************************/
    const getTasksList = async (db) => {
       const tasksCollection = collection(db, 'tasks');
-      const q = await query(tasksCollection, orderBy("dateCreation", "desc"));
+      const q = await query(tasksCollection, orderBy("dateCreation", "asc"));
       const querySnapshot = await getDocs(q);
       let taskList = []
       querySnapshot.forEach((doc) => {
@@ -199,7 +199,7 @@ window.onload = (e) => {
       let cardTitleElement = document.createElement('h6')
       cardTitleElement.setAttribute('class', "card-title title")
       // cardTitleElement.setAttribute('id', "title")
-      cardTitleElement.innerHTML = task.titre; //✅
+      cardTitleElement.textContent = task.titre; //✅
 
       const cardBodyElement = document.createElement('div')
       cardBodyElement.setAttribute('class', "card-body title")
@@ -241,7 +241,7 @@ window.onload = (e) => {
       const deadLineElement = document.createElement("strong")
       deadLineElement.innerHTML = '<i class="fas fa-calendar-day"></i> <b>Date Limite:</b>';
       deadLineElement.setAttribute("class", "fs-x-small deadline");
-      deadLineElement.innerHTML = task.dateLimite; //✅
+      deadLineElement.textContent = task.dateLimite; //✅
 
       const cardFooterElement = document.createElement("div");
       cardFooterElement.setAttribute("class", "card-footer py-0 d-flex justify-content-between align-items-center");
@@ -255,7 +255,8 @@ window.onload = (e) => {
       cardElement.dataset.etat = task.etat;
       cardElement.dataset.priorite = task.priorite;
       cardElement.dataset.titre = task.titre;
-      cardElement.dataset.date = task.dateLimite;
+      cardElement.dataset.dateLimite = task.dateLimite;
+      cardElement.dataset.dateCreation = task.dateCreation;
       cardElement.appendChild(cardHeaderElement);
       cardElement.appendChild(cardBodyElement);
       cardElement.appendChild(cardFooterElement);
@@ -392,7 +393,7 @@ window.onload = (e) => {
       taskDeadlineInput.style.borderColor = "initial";
       let error = document.querySelector('#error')
       error.classList.add('d-none')
-      document.querySelector('h5#modal_title').innerHTML = "Ajouter tâche";
+      document.querySelector('h5#modal_title').textContent = "Ajouter tâche";
       document.querySelector('#submit').innerText = "Valider"
       document.querySelector('#submit').classList.remove('btn-warning')
       document.querySelector('#submit').classList.add('btn-danger')
@@ -413,7 +414,7 @@ window.onload = (e) => {
       taskDeadlineInput.style.borderColor = "initial";
       let error = document.querySelector('#error')
       error.classList.add('d-none')
-      document.querySelector('h5#modal_title').innerHTML = "Modifier tâche"
+      document.querySelector('h5#modal_title').textContent = "Modifier tâche"
       document.querySelector('#submit').innerText = "Mettre à jour"
       document.querySelector('#submit').classList.remove('btn-danger')
       document.querySelector('#submit').classList.add('btn-warning')
@@ -426,7 +427,7 @@ window.onload = (e) => {
 
       taskTitleInput.value = taskTitle.innerText
       taskDescriptionInput.value = taskDescription.innerText
-      document.querySelector('#details_task_state').innerHTML = taskState.innerText
+      document.querySelector('#details_task_state').textContent = taskState.innerText
       taskDeadlineInput.value = new Date(taskDeadline.innerText).toISOString().substring(0, 16)
       document.querySelector(`input[name="task_priority"][value="${taskPriority.innerText}"]`).checked = true
 
@@ -438,7 +439,10 @@ window.onload = (e) => {
    /********************************/
    const filterBy = (option = "") => {
       const todoCards = document.querySelectorAll('.card')
-      todoCards.forEach(card => {
+      let todoCardsArray = [...todoCards];
+
+
+      todoCardsArray.forEach(card => {
          card.classList.add('d-none')
       })
       switch (option) {
@@ -461,15 +465,31 @@ window.onload = (e) => {
                }
             })
             break;
-         case "Date":
-            todoCards.forEach(element => {
-               const date = element.querySelector('strong.deadline')
-               if (element.dataset.etat == "En cours") {
-                  element.classList.remove("d-none")
-               } else {
-                  element.classList.add("d-none")
-               }
+         case "DateLimite":
+
+            todoCardsArray.sort((a, b) => {
+               return (new Date(a.dataset.dateLimite).getTime() >= new Date(b.dataset.dateLimite).getTime()) ? 1 : -1;
             })
+            cardContainer.replaceChildren(...todoCardsArray)
+            todoCardsArray.forEach(element => {
+               element.classList.remove("d-none")
+            })
+
+
+            break;
+         case "DateCreation":
+            // let elts = document.querySelectorAll('[data-date-creation]')
+
+            todoCardsArray = [...todoCards];
+            todoCardsArray.sort((a, b) => {
+
+               return (new Date(a.dataset.dateCreation).getTime() >= new Date(b.dataset.dateCreation).getTime()) ? -1 : 1;
+            })
+            cardContainer.replaceChildren(...todoCardsArray)
+            todoCardsArray.forEach(element => {
+               element.classList.remove("d-none")
+            })
+
 
             break;
          case "Priorite":
@@ -494,22 +514,15 @@ window.onload = (e) => {
 
             break;
          case "Titre":
-            let todoCardsArray = [...todoCards];
-            let div2 = document.createElement('div')
+            todoCardsArray = [...todoCards];
             todoCardsArray.sort((a, b) => {
-               if (a.dataset.titre.toLowerCase() >= b.dataset.titre.toLowerCase()) {
-                  return 1
-               } else {
-                  return -1
-               }
+
+               return (a.dataset.titre.toLowerCase() >= b.dataset.titre.toLowerCase()) ? 1 : -1;
             })
             cardContainer.replaceChildren(...todoCardsArray)
             todoCardsArray.forEach(element => {
                element.classList.remove("d-none")
             })
-
-            // console.log(i);
-            // element.classList.remove('d-none')
 
             break;
          default:
