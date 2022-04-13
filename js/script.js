@@ -13,26 +13,10 @@ import {
    getDoc,
    doc,
    query,
-   where,
-   orderBy,
-   Timestamp
+   orderBy
 } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
 window.onload = (e) => {
 
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //The Config of the  group
-   //  const firebaseConfig = {
-
-   //    apiKey: "AIzaSyCPmKwQqsltQlZ22Ok03_Swt6nKEAyuuoU",
-   //    authDomain: "storekeeper-85c99.firebaseapp.com",
-   //    projectId: "storekeeper-85c99",
-   //    storageBucket: "storekeeper-85c99.appspot.com",
-   //    messagingSenderId: "195903507633",
-   //    appId: "1:195903507633:web:83961fe8ac827f6e44e690",
-   //    // measurementId: "${config.measurementId}"
-   // };
-
-   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //The Own Config 
    const firebaseConfig = {
       apiKey: "AIzaSyCRMEWy6cu1ez4Sv9Ja0eKHhxzJui6AUYQ",
